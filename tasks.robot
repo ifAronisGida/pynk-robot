@@ -6,13 +6,21 @@ Library           RPA.Desktop
 Library           RPA.Robocorp.Vault
 
 *** Tasks ***
-Daily predict
-    Login to pynk
+Daily predict aron
+    ${secret}=    Get Secret    pynk_login_aron
+    Login to pynk    ${secret}
     Do daily predict
+    [Teardown]    Close pynk
+
+Daily predict csilla
+    ${secret}=    Get Secret    pynk_login_csilla
+    Login to pynk    ${secret}
+    Do daily predict
+    [Teardown]    Close pynk
 
 *** Keywords ***
 Login to pynk
-    ${secret}=    Get Secret    pynk_login
+    [Arguments]    ${secret}
     Open Available Browser    https://beta.pynk.io/login
     Input Text    email    ${secret}[user]
     Input Password    password    ${secret}[password]
@@ -29,10 +37,10 @@ Do daily predict
     Wait Until Page Contains Element    id:prediction_price
     FOR    ${counter}    IN RANGE    5
         Log To Console    \nPredict #${counter} started..
-        Sleep    2s
-        Click Element When Visible    css:div.item.next
-        Sleep    2s
-        Click Element When Visible    css:div.item.next
+        #Sleep    2s
+        #Click Element When Visible    css:div.item.next
+        #Sleep    2s
+        #Click Element When Visible    css:div.item.next
         FOR    ${inner_counter}    IN RANGE    ${counter}
             Log To Console    \nClicking next #${inner_counter}..
             Sleep    2s
@@ -65,3 +73,6 @@ Enter predict
     Log To Console    \nFinished predict, navigating to /prediction..
     Go To    https://beta.pynk.io/prediction
     Sleep    2s
+
+Close pynk
+    Close Browser
